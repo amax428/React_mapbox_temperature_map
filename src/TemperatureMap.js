@@ -1,12 +1,31 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
-import data from './data/sample.json';
+import data from './data/sample2.json';
 import 'mapbox-gl/dist/mapbox-gl.css';
+
+const preprocessTemperatureData = (json) => {
+  const temperatureMap = {
+    "hot": 50,
+    "warm": 20,
+    "cold": -30
+  };
+
+  // Loop through each feature in the JSON and update the temperature
+  json.features.forEach(feature => {
+    const temperature = feature.properties.temperature;
+    if (temperatureMap.hasOwnProperty(temperature)) {
+      feature.properties.temperature = temperatureMap[temperature];
+    }
+  });
+
+  return json;
+}
 
 const Map = () => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
 
+  const temperatureData = preprocessTemperatureData(data);
   useEffect(() => {
     mapboxgl.accessToken = 'pk.eyJ1IjoibnBiYWxsYXJkMTEiLCJhIjoiY2xraDl0d2l0MDZ6bDNlb2h2MnlpMTkxYSJ9.l6qs4UL8ULs2BAoGiqzHZw';
 
@@ -23,7 +42,7 @@ const Map = () => {
         mapRef.current.addSource('temperature', {
           type: 'geojson',
           // data: 'https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson'
-          data
+          data: temperatureData,
         });
       }
 
