@@ -2,24 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import data from './data/sample4.json';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { preprocessTemperatureData } from "./utils";
 
-const preprocessTemperatureData = (json) => {
-  const temperatureMap = {
-    "hot": 50,
-    "warm": 20,
-    "cold": -30
-  };
-
-  // Loop through each feature in the JSON and update the temperature
-  json.features.forEach(feature => {
-    const temperature = feature.properties.temperature;
-    if (temperatureMap.hasOwnProperty(temperature)) {
-      feature.properties.temperature = temperatureMap[temperature];
-    }
-  });
-
-  return json;
-}
 
 const Map = () => {
   const mapContainerRef = useRef(null);
@@ -41,11 +25,9 @@ const Map = () => {
     mapRef.current.on('load', () => {
       addLayers(mapRef.current, 0.5, 2);
     });
-    console.log('isSatellite', isSatellite);
   }, []);
 
   const addLayers = (mapInstance, opacity, blur) => {
-    console.log(opacity, blur)
     if (!mapInstance.getSource('temperature')) {
       mapInstance.addSource('temperature', {
         type: 'geojson',
@@ -86,7 +68,7 @@ const Map = () => {
             // 100,
             ['interpolate', ['linear'], ['get', 'temperature'], -30, 100, 50, 120],
           ],
-          // Color circle by earthquake magnitude
+          // Color circle by temperature value
           'circle-color': [
             'interpolate',
             ['linear'],
@@ -123,7 +105,6 @@ const Map = () => {
   }
 
   const toggleMapStyle = () => {
-    console.log('isSatellite', !isSatellite)
     const newStyle = isSatellite ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/satellite-v9';
     mapRef.current.setStyle(newStyle);
     mapRef.current.on('style.load', () => {

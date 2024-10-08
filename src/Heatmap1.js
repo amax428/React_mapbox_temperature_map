@@ -4,7 +4,6 @@ import temperatureData from './data/sample.json';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 function aggregateTemperature(data, gridSize) {
-  return data;
   const aggregatedData = {};
 
   data.features.forEach(feature => {
