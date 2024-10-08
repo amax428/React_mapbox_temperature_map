@@ -6,9 +6,9 @@ import { preprocessTemperatureData } from "./utils";
 
 
 const Map = () => {
-  const mapContainerRef = useRef(null);
-  const mapRef = useRef(null);
-  const [isSatellite, setIsSatellite] = useState(true);
+  const mapContainerRef = useRef(null); 
+  const mapRef = useRef(null); // map instance
+  const [isSatellite, setIsSatellite] = useState(true); // toggle for swith map
 
   const temperatureData = preprocessTemperatureData(data);
   useEffect(() => {
@@ -22,11 +22,13 @@ const Map = () => {
       maxZoom: 16,
     });
 
+    // show satellite map initially on first load
     mapRef.current.on('load', () => {
       addLayers(mapRef.current, 0.5, 2);
     });
   }, []);
 
+  // show temperature data function
   const addLayers = (mapInstance, opacity, blur) => {
     if (!mapInstance.getSource('temperature')) {
       mapInstance.addSource('temperature', {
@@ -104,6 +106,7 @@ const Map = () => {
     }
   }
 
+  //toggle function
   const toggleMapStyle = () => {
     const newStyle = isSatellite ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/satellite-v9';
     mapRef.current.setStyle(newStyle);
